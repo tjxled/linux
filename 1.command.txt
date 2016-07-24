@@ -59,3 +59,101 @@ MAN命令各项说明：
 q：退出
 
 文档:/usr/share/doc目录下有大多数命令的使用帮助文档
+
+复制和移动文件：
+cp：copy
+cp 复制一个文件到一个文件
+   复制多个文件到一个目录
+   cp /etc/passwd /tmp/       将文件passwd复制到/tmp/目录下，新的文件名为passwd
+   cp /etc/passwd /tmp/test   将文件passwd复制到/tmp/目录下，新的文件名为test
+   cp -r /etc/init.d/ /tmp/hello 将目录init.d下的所有文件复制到/tmp/hello/目录下
+   
+mv:
+mv /tmp/hello /tmp/abc 移动hello目录及其下的文件到/tmp/abc目录下(mv命令在移动目录时不需要使用-r选项)
+mv hello hi 将文件hello重命名为hi
+
+cat:
+-n 显示行号
+-E 显示每一行的行结束符$(windows中的文本编辑器在每一行后还会添加换行符,所以windows中的文本文件放到linux中运行可能会报错.另外notepad++只添加$符)
+tac 行显示顺序颠倒
+
+more:
+作用和cat类似,使用more命令查看文件后,输入space向后翻一页,输入b向前翻一页,输入enter向后翻一页.
+more只支持向后翻页
+
+less:
+作用和cat类似,翻页动作和man命令基本一样
+
+head:查看前n行(默认为10),可以指定-n
+tail:同head,向后查看. -f:查看文件尾部,不退出,等待显示后续追加的新内容
+
+文本处理:
+cut、join、sed、awk、grep
+cut:
+文件分隔命令
+cut -d : -f1 /etc/passwd 以:为分隔符,显示passwd文件的第1个字段
+-d:指定字段分隔符,默认是空格
+-f:指定要显示的字段
+	-f 1,3 显示第1个和第3个字段
+	-f 1-3 显示第1个到第3个字段
+
+排序命令:
+sort:
+默认排序根据字符ASCII升序排列
+-n：数值排序
+-r:降序
+-t:字段分隔符
+-k：选择字段的位置
+-u:排序后相同的内容只显示1次
+-f:排序时忽略字符大小写
+sort -t： -k3 /etc/passwd 查看passwd文件,以:为分隔符升序排序第3个字段
+uniq:
+显示或忽略重复的行
+-d:只显示重复的行
+-c:显示每行内容各出现了多少次
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

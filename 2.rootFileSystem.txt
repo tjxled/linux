@@ -1,0 +1,52 @@
+/boot: 系统启动的相关文件，如内核、initrd以及grub(bootloader)
+/dev: 设备文件
+		块设备:随机访问,数据块
+		字符设备: 线性访问,按字符为单位
+		设备号:主设备号(major)次设备号(minor)
+/etc:配置文件
+/home:用户的家目录,每一个用户的家目录默认为/home/USERNAME
+/root:管理员的家目录:
+/lib:库文件和内核模块文件
+    静态库:.a
+	动态库:windows下为.dll, linux下为.so(shared object)
+	/lib/modules:内核模块文件
+/media:挂载点目录,移动设备
+/mnt:挂载额外的临时文件
+/opt:可选目录,第三方程序的安装目录
+/proc:伪文件系统,内核映像.
+/sys:伪文件系统,跟硬件设备相关的属性映射文件
+/tmp:临时文件,每个用户都能在此目录下创建文件,/var/tmp
+/var:可变化的文件,如cache,lock(锁文件),log,mail(用户邮件转存位置),run(进程号码).
+/bin:可执行文件,用户命令
+/sbin:管理命令
+/usr:全称为u-universal s-shared r-readonly,
+	(启动后操作系统的功能)
+	/usr/bin
+	/usr/sbin
+	/usr/lib
+	/usr/local:
+		(第三方软件的功能)
+		/usr/local/bin
+		/usr/local/sbin
+		/usr/local/lib
+		
+linux文件命名规则:
+1.长度不能超过255个字符
+2.不能使用/当文件名
+3.区分大小写
+
+绝对路径,相对路径
+
+目录管理
+	ls cd pwd 
+	mkdir： mkdir /root/x/y/z 默认创建z目录(root/x/y目录已存在); -p选项:mkdir -p /root/x/y/z 若x和y目录不存在,先创建x和y目录; -v选项:显示创建过程中的详细信息
+			mkdir -p /mnt/test/{x/m,y}:同时创建/mnt/test下的x,x/m,y目录
+	tree:查看目录树
+
+删除文件:
+rm:rm命令默认添加了-i选项(询问是否删除),因为命令行中的rm命令并非rm本身,而是添加了"rm -i"的别名.(输入type rm，返回rm is aliased to rm -i)
+若想去掉别名使用rm命令本身，则输入\rm
+	-i
+	-f:强行删除
+	-r:删除目录
+	rm -rf强行删除目录及目录下的所有文件
