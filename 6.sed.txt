@@ -1,0 +1,34 @@
+sed:从文本文件中读取行到模式空间中,在模式空间中与模式进行匹配,若成功则根据编辑命令对该行进行编辑(不修改原文件,仅对模式空间中的数据进行处理)
+
+命令格式:
+sed [options] 'AddressCommand' file ...
+[options]:
+	-n:静默模式,不再默认显示模式空间中的内容,只显示符合条件的行
+	-i:直接修改原文件
+	-e SCRIPT -e SCRIPT...:可以同时执行多个脚本
+	-f /path/to/SED_SCRIPT:用脚本对file进行处理
+		sed -f /path/to/SED_SCRIPT file
+	-r:使用扩展正则表达式
+Address表示方法:
+	1.StartLine,EndLine,如1,100
+	2./RegExp/
+	3./RegExp1/,/RegExp2/:第一次被RexExp1匹配到的行,和第二次被RegExp2匹配到的行,之间的所有行
+	4.LineNum:指定的某行
+		$ 最后一行
+		$-1 倒数第二行
+		...
+	5.StartLine, +N:从StartLine开始向后的N行
+Command:
+	d:删除符合条件的行
+	p:显示符合条件的行
+	a \STRING:在指定的行后面追加新行,内容为STRING
+		\n:可用于换行
+	i \STRING:在指定的行前面追加新行,内容为STRING
+	r FILE:将指定文件的内容添加至符合条件的行处
+	w FILE:将指定范围内的内容另存进指定文件中
+	s/RegExp/STRING/修饰符:查找并替换,将每一行中第一个RegExp包含的字符串替换为STRING(s ///也可以替换为s ###,s @@@,并且如果搜索内容中包含'/',使用###,@@@则不用添加转义字符)
+		STRING中使用&:引用模式匹配到的整个字符串
+		修饰符:
+		g:全局替换
+		i:查找时忽略字符大小写
+	
