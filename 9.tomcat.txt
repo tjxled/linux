@@ -1,0 +1,98 @@
+Tomcat的配置层次(组件):
+<server>
+	<service>
+		<connector />
+		<engine>
+			<host>
+				</context>
+				<context>
+			</host>
+		</engine>
+	</service>
+</server>
+
+顶级组件:位于整个配置的顶层
+容器类组件:可以包含其它组件的组件
+连接器组件:连接用户请求至tomcat的组件
+被嵌套类的组件:位于一个容器当中,不能包含其它组件
+
+容器类:
+	engine:核心容器,catalina引擎,负责通过connector接收用户请求
+	host:类似于httpd中的虚拟主机,支持基于FQDN的虚拟主机
+	context:用来定义应用程序的部署,最内层的容器类组件.一个context代表一个web应用程序,指定对应的webapp的根目录,还能为webapp指定额外的属性如部署方式等
+服务(service):
+	用来将连接器和引擎建立连接,因此一个service内部可以有多个connector,但只能有一个engine
+顶级组件(server):
+	表示运行于JVM中的一个tomcat实例
+嵌套类组件:
+
+简单介绍几个组件:
+1.server组件:
+在/apache-tomcat/conf/Server.xml中:<Server port="8005" shutdown="SHUTDOWN">监听8005端口,输入shutdown命令后关闭tomcat.(未指定地址则默认监听本地地址)
+2.service组件:
+主要用于关联一个引擎和与此引擎相关的连接器,每个连接器通过一个特定的端口和协议接收入站请求将其转发至关联的引擎进行处理.service包含一个引擎,一个或多个连接器
+<Service name="Catalina">
+3.Connector组件:
+进入Tomcat的请求可以根据Tomcat的工作模式分为如下两类:
+Tomcat作为应用程序服务器:请求来自于前面的web服务器,如Apache,IIS,Nginx等.
+Tomcat作为独立服务器,请求来自于web浏览器.
+Connector连接器类型有:
+	1)HTTP连接器
+	2)SSL连接器
+	3)AJP 1.3连接器
+	4)proxy连接器
+Connector几种属性:
+	 例:<Connector port="8080"  maxHttpHeaderSize="32768" protocol="org.apache.coyote.http11.Http11NioProtocol"         
+               useBodyEncodingForURI="true"                                                           
+               maxThreads="2000" minSpareThreads="25" maxSpareThreads="200"                           
+               enableLookups="false" redirectPort="8443" acceptCount="5000"                           
+               compression="on" compressionMinSize="2048"  compressableMimeType="text/html,text/xml,text/javascript,text
+/css,text/plain"  
+               connectionTimeout="20000" socketBuffer="10000" disableUploadTimeout="true" URIEncoding="UTF-8"/> 
+4.Engine组件：
+servlet处理器的一个实例，即servlet引擎。Engine需要defaultHost属性来为其定义一个接收所有发往非明确定义虚拟主机的请求的host组件，如:
+<Engine name="Catalina" defaultHost="localhost">
+5.Host组件:
+位于Engine容器中用于接收请求并进行相应处理的主机或虚拟主机
+			   
+Tomcat配置文件:
+	server.xml:主配置文件
+	context.xml:为部署于此Tomcat实例上的所有web应用程序提供的默认配置文件(每个webapp都可以使用独有的context.xml,通常放置于webapp/META-INF子目录中).常用于会话管理器,Realm以及JDBC等.
+	web.xml:为部署于此Tomcat实例上的所有web应用程序提供默认部署描述符;通常用于为webapp提供基本的servlet定义和MIME映射表等
+	
+Tomcat应用部署:
+	静态部署:Tomcat启动之前部署
+	动态部署:Tomcat运行时部署
+	部署是由一类"操作"组成:
+		Deploy:将webapp的源文件放置于目标目录,配置Tomcat服务器能够基于context路径访问此webapp,并将其特有的类由类加载器进行装载等
+		Redeploy:重新部署,主要用于升级时
+		Undeploy:取消部署,停止应用程序并从Tomcat实例上移除其部分文件和部署名
+		stop:暂停应用程序
+		start:将暂停的应用程序启动起来
+	部署方式:
+		Tomcat Manager,ANT脚本,TCD
+		war类归档程序的部署:将归档文件复制到$CATALINA_BASE/webapps/目录中,并重启Tomcat即可,Tomcat会自动展开war归档;也可以使用Tomcat Manager进行热部署
+webapp体系结构:
+	webapp有特定的组织格式,是一种层次性目录结构,通常包括:Servlet代码文件,jsp文件,类文件,部署描述符文件等等,一般会打包成归档格式.
+	/:webapp的根目录
+	/WEB-INF:此webapp的私有资源目录,通常web.xml和context.xml均放置于此目录
+	/WEB-INF/classes:此webapp自有的类
+	/WEB-INF/lib:此webapp自有的能够被打包成jar格式的类
+
+webapp的归档格式:
+	EJB类归档的扩展名为.jar
+	web应用程序的归档扩展名为.war
+	资源适配器的扩展名为.rar
+	企业级应用程序的扩展名为.ear
+	web服务的扩展名为.ear或.war
+	
+apache与tomcat连接器通信的模块有两个:
+	mod_jk(支持http与ajp协议):apache1.3,apache2.0版本
+	mod_proxy(支持http与ajp协议):apache2.2+
+	二者比较:
+		组在均衡:都支持
+		管理接口:都支持
+		兼容性:apache自带mod_proxy,mod_jk需要手动安装
+		配置:mod_proxy简单,mod_jk复杂
+		支持协议:mod_jk(ajp),mod_proxy(http/https/ajp)
+	
