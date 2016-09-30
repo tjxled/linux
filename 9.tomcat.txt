@@ -95,4 +95,13 @@ apache与tomcat连接器通信的模块有两个:
 		兼容性:apache自带mod_proxy,mod_jk需要手动安装
 		配置:mod_proxy简单,mod_jk复杂
 		支持协议:mod_jk(ajp),mod_proxy(http/https/ajp)
-	
+	Tomcat的HTTP连接器(涉及Tomcat性能调优):
+		1.基于java的http/1.1连接器
+		2.基于java的高性能NIO HTTP/1.1连接器
+		3.基于C/C++研发的Native APR HTTP/1.1连接器(建议在负载较大的环境中使用,需要额外配置Tomcat的APR)
+		默认使用的是第一种连接器,若要改为第3种则在server.xml中的<Connector port="8080" maxHttpHeaderSize="32768" protocol="http/1.1"中把protocol改为="org.apache.coyote.http11.Http11NioProtocol"
+	LAMT:
+		apache(mod_jk,(ajp)) + tomcat(ajp connector)
+		apache(mod_proxy,(ajp,http,https)) + tomcat(http,https,ajp)
+	LNMT:
+		nginx(mod_proxy,(ajp,http,https)) + tomcat(http,https,ajp)
