@@ -105,3 +105,42 @@ apache与tomcat连接器通信的模块有两个:
 		apache(mod_proxy,(ajp,http,https)) + tomcat(http,https,ajp)
 	LNMT:
 		nginx(mod_proxy,(ajp,http,https)) + tomcat(http,https,ajp)
+		nginx做反向代理时的配置:
+			1)在tomcat中访问内容
+			/path/nginx/conf/nginx.conf中修改location的内容:
+				server {
+				listen       80;
+				server_name  localhost;
+				location / {
+					#root   html;
+					#index  index.html index.htm index.php;
+					proxy_pass http://ip:8080;
+				}
+			2)如果要让tomcat显示动态内容,而前端显示静态内容:
+				server {
+			listen       80;
+			server_name  localhost;
+			location / {
+				root   /web/htdocs;
+				#index  index.html index.htm index.php;
+				#proxy_pass http://ip:8080
+			}
+			location ~*\.(jsp|do)$ {
+				proxy_pass http://ip:8080
+			}
+			location ~*\.(jpg|jpeg|gif|png|pdf|doc|rar)$ {
+				proxy_pass http://ip2:8080
+			}
+			3)实现负载均衡
+			http{
+				upstream tomcat {
+					server host1
+					server host2
+					server host3
+				}
+				server{
+					location ~*\.(jsp|do){
+						proxy_pass http://ip:8080;
+					}
+				}
+			}

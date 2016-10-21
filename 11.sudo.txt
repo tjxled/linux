@@ -1,0 +1,4 @@
+sudo的配置文件:/etc/sudoers
+	visudo:用来编辑/etc/sudoers文件的命令
+	一个sudo条目:
+		who   which_hosts=(runas)   COMMAND

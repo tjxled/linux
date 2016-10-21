@@ -1,0 +1,42 @@
+RPC协议:Remote Procedure Call Protocol 远程过程调用协议
+	基于二进制实现数据通信的协议
+NFS:基于RPC协议的网络文件系统
+Samba:基于CIFS/SMB的可以跨平台的文件共享
+FTP协议:File Transfer Protocol 文件传输协议
+	tcp端口号21
+	文件共享服务:将一个主机上的文件共享给其它主机,ftp工作在应用层
+	2个连接:
+		命令连接(用于接收用户命令)端口21协议tcp
+		数据连接(传输文件时按需打开或关闭)端口(主动模式20被动模式随机生成)
+	数据传输模式:
+		二进制
+		文本
+	vsftpd(红帽linux中的ftp服务器程序):
+		目录结构:
+			/var/ftp提供ftp服务的根目录:该目录不允许root以外的用户具有写权限
+		上传和下载:
+			运行vsftpd服务的用户不是root,上传和下载不能在/var/ftp根目录下进行,需在/var/ftp目录下再创建一个目录
+NFS:
+	服务器端:
+		yum -y install nfs-utils.x86_64
+	配置文件:
+		vi /etc/exports
+			home/nfsroot 10.10.55.0/24(ro,no_root_squash)	表示10.10.55.0-10.10.55.254的主机可以访问,访问权限为ro
+			文件导出权限:
+				ro
+				rw
+				sync
+				async
+	查看nfs导出的文件系统:
+		showmount -e NFS_SERVER
+	客户端使用mount命令挂载:
+		mount -t nfs NFS_SERVER:/PATH/TO/DIR /PATH/TO/LOCAL
+	exportfs命令:
+		-a:跟-r和-u选项同时使用,表示重新挂载或取消导出所有文件系统
+		-r:重新导出
+		-u:取消导出
+		-v:显示详细信息
+	让nfs服务(mountd和quotad)监听在固定端口:
+		vi /etc/sysconfig/:
+			MOUNTD_PORT=
+		

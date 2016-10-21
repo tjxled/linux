@@ -1,0 +1,111 @@
+mysql命令:
+	客户端命令:
+		-u USERNAME
+		-p 'PASSWORD'
+		-h MYSQL_SERVER
+		-quit 退出客户端
+	服务器端命令:
+		show databases:列出mysql中的数据库(mysql的数据库实际对应为/var/lib/mysql目录中的各个文件夹)
+		
+表(字段):
+	字符:
+		CHAR(n) 固定长度字符
+		VARCHAR(n) 可变长度字符
+		BINARY(n) 固定长度字符,区分大小写
+		VARBINARY(n) 可变长度字符,区分大小写
+		TEXT(n) 存储大文本
+		BLOB(n) 存储大文本,区分大小写
+	数值:
+		精确数值
+			整型(修饰符unsigned无符号)
+				TINYINT -128到127或0到255
+				SMALLINT 
+				MEDIUMINT
+				INT
+				BIGINT
+			十进制
+				DECIMAL
+			浮点型
+				FLOAT
+				DOUBLE
+			日期时间
+				DATA
+				TIME
+				DATETIME
+				STAMP
+			布尔
+			内置
+				ENUM
+				SET
+命令:
+	DDL:
+		CREATE
+			创建数据库:CREATE DATEBASE db_name;
+			创建表:CREATE TABLE tb_name(col1,col2,...);
+				创建表时需指定在哪个数据库中创建,可以使用:1)CREATE TABLE mydb.tb_name
+														  2)先使用USE mydb设置默认数据库
+		ALTER
+			ALTER TABLE tb_name
+				MODIFY 修改字段
+				CHANGE 改变字段
+				ADD 添加字段
+				DROP 删除字段
+		DROP
+			删除数据库:DROP DATABASE db_name;
+			删除表:DROP TABLE tb_name;
+		SHOW
+			查看库中的表:SHOW TABLES FROM db_name;
+			查看表的结构:DESC tb_name;
+	DML:
+		SELECT:
+			选择(指定某字段为搜索码,将符合条件的行的所有字段显示出来):SELECT * FROM tb_name WHERE column=value;
+			投影(将符合条件的列显示出来):SELECT col1,col2 FROM tb_name;
+			选择+投影:SELECT col1,col2 FROM tb_name WHERE column=value;
+		INSERT
+			对指定表中的字段插入数据:INSERT INTO tb_name(col1, col2,...) VALUE ('STRING', NUM,...);注:如果表中的每个字段都插入数据,则不用写字段名称(col1, col2,...)
+			对指定表中的字段插入一组数据:INSERT INTO tb_name(col1, col2,...) VALUE ('STRING1', NUM1,...),('STRING2', NUM2 ,...),...;
+		UPDATE
+			修改某个字段:UPDATE tb_name SET column=value WHERE column=value;
+		DELETE
+			删除符合条件的行:DELETE FROM tb_name WHERE column=value;
+	DCL:
+			创建用户:CREATE USER 'USERNAME'@'HOST' IDENTIFIED BY 'PASSWORD';
+			删除用户:DROP USER 'USERNAME'@'HOST';
+				HOST:
+					IP;
+					HOSTNAME;
+					NETWORK;
+					通配符:
+						_:匹配任意单个字符(192.168.0._)
+						%:匹配任意字符
+			用户授权:GRANT privilege1,privilege2,... ON db_name.tb_name TO 'username'@'host';
+					(privilege包括SELECT,DELETE等;如果用户不存在则自动创建用户并授权)
+			取消权限:REVOKE privilege1,privilege2,... ON db_name.tb_name FROM 'username'@'host';
+			查看用户授权:SHOW GRANTS FOR 'username'@'host';
+			为用户设定密码:SET PASSWORD FOR 'username'@'HOST'=PASSWORD('password');
+			将修改数据库user和privilege表后的信息刷新到内存:FLUSH PRIVILEGE;
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				
