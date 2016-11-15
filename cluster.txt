@@ -1,0 +1,87 @@
+LB:负载均衡
+HA:高可用
+HPC:高性能
+
+LB:
+	实现方式:
+		硬件设备
+		软件:
+			LVS(四层)
+			nginx(七层)	http,smpt,pop3,imap
+			haproxy(七层) http,tcp(mysql,smtp)
+			
+HA:
+	Messaging Layer:信息传递
+		heartbeat(v1,v2,v3)
+			heartbeat v3(heartbeat,pacemaker,cluster-glue)
+		corosync
+		cman
+		keepalived
+		ultramonkey
+	CRM:资源管理
+		haresource,crm(heartbeat v1,heartbeat v2)
+		pacemaker(heartbeat v3,corosync)
+		rgmanager(cman)
+	Resource Type:资源类型
+		primitive
+		clone
+		group
+		master/slave(dedb)
+	RA:资源代理(脚本)
+		Legacy heartbeat v1 RA
+		LSB(在/etc/rc.d/init.d目录下,遵循linux shell编程风格,支持start,stop,restart,status等动作)
+		OCF(Open Cluster Framework)
+	heartbeat安装:
+		三个配置文件:(三个文件的样例在/usr/share/doc/heartbeat-3.0.4目录下)
+			1.密钥文件:authkeys
+			2.heartbeat配置文件:ha.cf
+			3.资源管理配置文件:haresources
+		配置步骤:
+			1.cp /usr/share/doc/heartbeat-3.0.4/{authkeys,ha.cf,haresources} ./
+				将三个文件的样例拷贝到/etc/ha.d目录下
+			2.配置authkeys
+				vi authkeys,在最下方添加
+				auth 1
+				1 md5 3456019fa8708e9a8556eeff36348ee7
+				(md5码使用命令dd if=/dev/random count=1 bs=512 | md5sum生成)
+			3.配置ha.cf
+				vi ha.cf编辑以下内容:
+				keepalive	1(每隔1秒发一次心跳信息)
+				deadtime	30(30秒判定失去响应)
+				warntime	10(警告时间为10秒)
+				initdead	120(自开机启120秒未收到信息则判定未加入集群)
+				udpport 	694(heartbeat服务监听端口为694)
+				bcast		eth0(开启广播)
+				node		ha1(定义节点ha1)
+				node		ha2(定义节点ha2)
+				ping		10.10.0.254(设置ping测试的网关地址,默认为改地址始终可以连接)
+				respawn hacluster /usr/lib/heartbeat/ipfail(重启heartbeat服务,64位系统要注意路径)
+			
+drbd+heartbeat+nfs:
+	heartbeat:
+		三个配置文件:
+			1.authkeys
+			2.ha.cf
+			3.haresource
+		准备工作:
+			1.时间同步 ntpdate -u asia.pool.ntp.org
+			2.双机互信
+			3.主机名与uname -n相同,并通过/etc/hosts解析
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

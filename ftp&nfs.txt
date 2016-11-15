@@ -39,4 +39,5 @@ NFS:
 	让nfs服务(mountd和quotad)监听在固定端口:
 		vi /etc/sysconfig/:
 			MOUNTD_PORT=
+			RQUOTAD_PORT=
 		

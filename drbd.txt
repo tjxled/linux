@@ -1,0 +1,106 @@
+centos6搭建drbd(yum安装):
+准备工作：
+1.两台服务器，centos6.x系统
+2.两台服务器上的hosts、/etc/sysconfig/network文件都要写上主机名与IP对应的关系
+3.为两台服务器添加磁盘，并格式化：fdisk /dev/sdb中添加分区sdb1，然后mkfs -t ext3 /dev/sdb1
+
+在之前，将6.5的内核进行了升级，如果以下命令不行，可以先将内核进行升级。升级后重启，应用新内核:
+1.yum update kernel 
+2.yum install kernel-devel
+3.rpm -Uvh http://www.elrepo.org/elrepo-release-6-6.el6.elrepo.noarch.rpm
+4.yum list all | grep drbd(查看当前提供的drbd源,8.3版本的带drbd内核。8.4版本的为linux2.6.33以上使用的版本，因为从2.6.33
+开始的linux自带drbd内核)
+
+drbd配置文件：
+1.全局配置文件
+vi /etc/drbd.d/global_common.conf
+ 
+global {
+usage-count yes;
+}
+ 
+common {
+protocol C;
+ 
+startup {
+wfc-timeout          240;
+degr-wfc-timeout     240;
+outdated-wfc-timeout 240;
+}
+ 
+disk {
+on-io-error detach;
+ 
+}
+ 
+net {
+   cram-hmac-alg md5;
+shared-secret "testdrbd";
+ 
+}
+ 
+syncer {
+rate 300M;           
+al-extents 3389;
+verify-alg  md5;    ##pei he /etc/crontab   4 * * * *  root /sbin/drbdadm verify  resourceName，用于数据校验的，通过配合定时任务可以一起起作用。
+ 
+ 
+}
+}
+2.资源配置文件
+vi r0.res
+ 
+resource r0{
+on g105-1 {
+  device     /dev/drbd0;
+  disk       /dev/testvg/testlv;
+  address    192.168.100.177:7898;
+  meta-disk  internal;
+ }
+on g105-2 {
+  device     /dev/drbd0;
+  disk       /dev/VolGroup/testlv;
+  address    192.168.100.253:7898;
+  meta-disk  internal;
+ }
+}
+
+完成配置后准备启动drbd，在启动DRBD之前,需要分别在两台主机的hdb分区上,创建供DRBD记录信息的数据块.分别在两台主机上执行:
+[root@master ]#drbdadm create-md r0
+[root@slave ]#drbdadm create-md r0
+备注：
+1) “r0”是在drbd.conf里定义的资源名称.
+2) 当执行命令”drbdadm create-md r0”时，出现以下错误信息。
+Device size would be truncated, which
+would corrupt data and result in
+'access beyond end of device' errors.
+You need to either
+ * use external meta data (recommended)
+ * shrink that filesystem first
+ * zero out the device (destroy the filesystem)
+Operation refused.
+Command 'drbdmeta 0 v08 /dev/xvdb internal create-md' terminated with exit code 40
+drbdadm create-md r0: exited with code 40
+解决办法：初始化磁盘文件格式, dd if=/dev/zero bs=1M count=1 of=/dev/sdb1; sync
+2.启动DRBD，分别在两台主机上执行
+[root@master ]# /etc/init.d/drbd start
+[root@slave ]# /etc/init.d/drbd start
+3.启动后，先查看一下drbd的状态，目前显示是不一致，因为还没有指定主设备：
+cat /proc/drbd
+version: 8.3.16 (api:88/proto:86-97)
+GIT-hash: a798fa7e274428a357657fb52f0ecf40192c1985 build by phil@Build64R6, 2014
+-10-28 10:31:39
+ 0: cs:Connected ro:Secondary/Secondary ds:Inconsistent/Inconsistent C r-----
+    ns:0 nr:0 dw:0 dr:0 al:0 bm:0 lo:0 pe:0 ua:0 ap:0 ep:1 wo:f oos:5242684
+4.指定ha1的drbd设备为主：在主机ha1上执行命令：
+drbdsetup /dev/drbd0 primary -o
+
+使用drbd：
+1.在主节点上格式化drbd0：mkfs.ext3 /dev/drbd0
+2.挂载：mount /dev/drbd0 /drbdData
+3.主备切换：先将主上面的磁盘卸载掉并降级
+	umount /dev/drbd0
+	drbdadm secondary r0
+	在备机上升级为主机
+	drbdadm primary r0
+4.挂载备机：mount /dev/drbd0 /drbdData
