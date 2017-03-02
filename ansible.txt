@@ -1,0 +1,7 @@
+常用命令：
+
+ansible $group -S -R root -m shell -a 'uptime' 
+使用root权限执行命令
+
+ansible $group -S -R root -m copy -a "src=/opt/$file dest=/etc/init.d/ owner=root group=root mode=0755 backup=yes"
+拷贝文件到指定目录

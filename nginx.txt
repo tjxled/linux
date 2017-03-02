@@ -1,0 +1,68 @@
+一、安装：
+1.安装nginx时必须先安装相应的编译工具
+yum -y install gcc gcc-c++ autoconf automake
+yum -y install zlib zlib-devel openssl openssl-devel pcre-devel
+
+2.建立nginx 组
+groupadd -r nginx
+useradd -s /sbin/nologin -g nginx -r nginx
+id nginx
+
+zlib:nginx提供gzip模块，需要zlib库支持
+openssl:nginx提供ssl功能
+pcre:支持地址重写rewrite功能
+
+3.tar -zxvf nginx-1.2.8.tar.gz
+
+4.cd nginx-1.2.8
+
+5. ./configure \
+--prefix=/usr \
+--sbin-path=/usr/sbin/nginx \
+--conf-path=/etc/nginx/nginx.conf \
+--error-log-path=/var/log/nginx/error.log \
+--pid-path=/var/run/nginx/nginx.pid \
+--user=nginx \
+--group=nginx \
+--with-http_ssl_module \
+--with-http_flv_module \
+--with-http_gzip_static_module \
+--http-log-path=/var/log/nginx/access.log \
+--http-client-body-temp-path=/var/tmp/nginx/client \
+--http-proxy-temp-path=/var/tmp/nginx/proxy \
+--http-fastcgi-temp-path=/var/tmp/nginx/fcgi \
+--with-http_stub_status_module
+
+6.make && make install
+
+
+二、配置文件（/etc/nginx/nginx.conf）
+例 server {
+        listen       80;
+        server_name  localhost;
+
+        #charset koi8-r;
+
+        #access_log  logs/host.access.log  main;
+
+        location / {
+            root   html;	#root是nginx安装的根目录（/usr），root html即为/usr/html
+            index  index.html index.htm;	#index是访问的默认网页，即为/usr/html/index.html
+        }					#location后的/是uri路径
+		
+		error_page   500 502 503 504  /50x.html;报500 502 503 504错误时，访问/50x.html
+        location = /50x.html {
+            root   html;
+        }
+
+
+location：
+	
+
+
+
+
+
+
+
+
