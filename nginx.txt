@@ -58,7 +58,10 @@ pcre:支持地址重写rewrite功能
 
 location：
 	
-
+3.启停：
+/opt/nginx		#启动nginx
+/opt/nginx -s reload	#不中断服务的情况下，重新加载配置文件
+/opt/nginx -s stop	#停止nginx
 
 
 

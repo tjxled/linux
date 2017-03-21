@@ -1,0 +1,7 @@
+1s1k服务器jdk补丁升级，ansible执行java -version查看版本和本机上执行返回的版本不一样
+81、82两个nfs集群安装zabbix-agent，将所有nfs服务器加入监控
+
+日常工作描述：
+1.200余台linux服务器的日常维护与管理
+2.tomcat、nginx等应用的维护
+3.一些开源应用的搭建部署：heartbeat实现nfs双机高可用；zabbix监控服务器性能以及部分应用、端口的运行状态；使用ansible自动化工具对服务器进行批处理工作。
