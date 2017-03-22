@@ -1,5 +1,5 @@
-1s1k服务器jdk补丁升级，ansible执行java -version查看版本和本机上执行返回的版本不一样
-81、82两个nfs集群安装zabbix-agent，将所有nfs服务器加入监控
+在centos5.8上尝试安装glances
+zabbix修改jmx监控配置
 
 日常工作描述：
 1.200余台linux服务器的日常维护与管理
